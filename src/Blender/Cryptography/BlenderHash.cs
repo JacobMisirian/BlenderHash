@@ -1,21 +1,43 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Blender.Cryptography
 {
-    public class BlenderHash
+    public class BlenderHash : HashAlgorithm
     {
-        private Prng prng;
-        private int hashLength;
+        public new string Hash { get { return getHexString(result); } }
+        private byte[] result;
 
-        public string Hash(Stream data, int hashLength, int passes)
+        private Prng prng;
+
+        protected override void HashCore(byte[] data, int hashLength, int passes)
+        {
+            this.result = new byte[hashLength];
+
+            for (int i = 0; i < passes * 2; i++)
+                for (int j = 0; j < data.Length; j++)
+                    result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ prng.NextByte((byte)j));
+        }
+
+        protected override byte[] HashFinal()
+        {
+            return result;
+        }
+
+        public override void Initialize()
+        {
+
+        }
+
+        public byte[] ComputeHash(Stream data, int hashLength = 32, int passes = 3)
         {
             if (data.Length < hashLength)
             {
                 byte[] bytes = new byte[hashLength];
                 data.Read(bytes, 0, hashLength);
-                return Hash(bytes, hashLength, passes);
+                return ComputeHash(bytes, hashLength, passes);
             }
 
             uint seed = 0;
@@ -25,9 +47,8 @@ namespace Blender.Cryptography
                 seed += new Prng(b).NextByte((byte)(b ^ seed));
             }
             prng = new Prng(seed);
-            this.hashLength = hashLength;
 
-            byte[] result = new byte[hashLength];
+            this.result = new byte[hashLength];
 
             for (int i = 0; i < passes * 2; i++)
             {
@@ -36,27 +57,21 @@ namespace Blender.Cryptography
                     result[data.Position % hashLength] += (byte)(prng.NextByte((byte)data.ReadByte()) ^ prng.NextByte((byte)data.Position));
             }
 
-            return getHexString(result);
+            return result;
         }
-        public string Hash(byte[] data, int hashLength, int passes)
+        public new byte[] ComputeHash(byte[] data, int hashLength = 32, int passes = 3)
         {
             uint seed = 0;
             foreach (byte b in data)
                 seed += new Prng(b).NextByte((byte)(b ^ seed));
             prng = new Prng(seed);
-            this.hashLength = hashLength;
 
-            data = pad(data);
-            byte[] result = new byte[hashLength];
-
-            for (int i = 0; i < passes * 2; i++)
-                for (int j = 0; j < data.Length; j++)
-                    result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ prng.NextByte((byte)j));
-
-            return getHexString(result);
+            data = pad(data, hashLength);
+            HashCore(data, hashLength, passes);
+            return result;
         }
 
-        private byte[] pad(byte[] data)
+        private byte[] pad(byte[] data, int hashLength)
         {
             if (data.Length >= hashLength)
                 return data;

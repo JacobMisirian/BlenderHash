@@ -24,20 +24,23 @@ namespace Blender
 
         public void Execute()
         {
+            BlenderHash hash = new BlenderHash();
             switch (BlenderHashMode)
             {
                 case BlenderHashMode.File:
-                    Console.WriteLine(new BlenderHash().Hash(new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read), HashLength, Passes));
+                    hash.ComputeHash(new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read), HashLength, Passes);
+                    Console.WriteLine(hash.Hash);
                     break;
                 case BlenderHashMode.Repl:
-                    BlenderHash hash = new BlenderHash();
                     while (true)
                     {
                         Console.Write("> ");
-                        Console.WriteLine(hash.Hash(ASCIIEncoding.ASCII.GetBytes(Console.ReadLine()), HashLength, Passes));
+                        hash.ComputeHash(ASCIIEncoding.ASCII.GetBytes(Console.ReadLine()), HashLength, Passes);
+                        Console.WriteLine(hash.Hash);
                     }
                 case BlenderHashMode.String:
-                    Console.WriteLine(new BlenderHash().Hash(ASCIIEncoding.ASCII.GetBytes(DataString), HashLength, Passes));
+                    hash.ComputeHash(ASCIIEncoding.ASCII.GetBytes(DataString), HashLength, Passes);
+                    Console.WriteLine(hash.Hash);
                     break;
             }
         }
