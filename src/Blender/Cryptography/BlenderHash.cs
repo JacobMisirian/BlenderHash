@@ -19,9 +19,9 @@ namespace Blender.Cryptography
             data = pad(data);
             byte[] result = new byte[hashLength];
 
-            for (int i = 0; i < passes; i++)
-            for (int j = 0; j < data.Length; j++)
-                result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ prng.NextByte((byte)j));
+            for (int i = 0; i < passes * 2; i++)
+                for (int j = 0; j < data.Length; j++)
+                    result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ prng.NextByte((byte)j));
 
             return getHexString(result);
         }

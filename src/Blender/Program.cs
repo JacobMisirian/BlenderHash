@@ -14,7 +14,7 @@ namespace Blender
             while (true)
             {
                 Console.Write("> ");
-                Console.WriteLine(generator.Hash(ASCIIEncoding.ASCII.GetBytes(Console.ReadLine()), 64, 3));
+                Console.WriteLine(generator.Hash(ASCIIEncoding.ASCII.GetBytes(Console.ReadLine()), 64, 1));
             }
         }
     }
