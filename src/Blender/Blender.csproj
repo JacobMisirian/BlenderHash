@@ -38,6 +38,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Cryptography\Prng.cs" />
     <Compile Include="Cryptography\BlenderHash.cs" />
+    <Compile Include="BlenderConfig.cs" />
+    <Compile Include="BlenderArgumentParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
