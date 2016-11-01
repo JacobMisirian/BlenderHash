@@ -31,9 +31,8 @@ namespace Blender.Cryptography
             b ^= (c ^ d) ^ seed ^ source;
             c ^= b | seed ^ (d ^ a);
             d ^= a ^ source | seed;
-            seed++;
+            seed += source;
             return (byte)((a | b) ^ (c ^ d));
         }
     }
 }
-

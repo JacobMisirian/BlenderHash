@@ -18,7 +18,7 @@ namespace Blender.Cryptography
 
             for (int i = 0; i < passes * 2; i++)
                 for (int j = 0; j < data.Length; j++)
-                    result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ prng.NextByte((byte)j));
+                    result[j % hashLength] += (byte)(prng.NextByte(data[j]) ^ (prng.NextByte((byte)j)) * data[j]);
         }
 
         protected override byte[] HashFinal()
@@ -62,11 +62,13 @@ namespace Blender.Cryptography
         public new byte[] ComputeHash(byte[] data, int hashLength = 32, int passes = 3)
         {
             uint seed = 0;
-            foreach (byte b in data)
-                seed += new Prng(b).NextByte((byte)(b ^ seed));
+            prng = new Prng((byte)data.Length);
+            for (int i = 0; i < data.Length; i++)
+                seed += prng.NextByte((byte)(data[i] * i ^ seed));
             prng = new Prng(seed);
 
             data = pad(data, hashLength);
+
             HashCore(data, hashLength, passes);
             return result;
         }
@@ -79,7 +81,7 @@ namespace Blender.Cryptography
             byte[] result = new byte[hashLength];
             data.CopyTo(result, 0);
             for (int i = data.Length; i < result.Length; i++)
-                result[i] = (byte)(prng.NextByte((byte)data.Length) ^ prng.NextByte((byte)i));
+                result[i] = (byte)(prng.NextByte((byte)i) * i);
             return result;
         }
 
