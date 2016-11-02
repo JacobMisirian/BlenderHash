@@ -29,7 +29,7 @@ namespace Blender.Cryptography
         {
             a ^= (source ^ seed) | b;
             b ^= (c ^ d) ^ seed ^ source;
-            c ^= b | seed ^ (d ^ a);
+            c ^= b | seed ^ (d ^ source);
             d ^= a ^ source | seed;
             seed += source;
             return (byte)((a | b) ^ (c ^ d));
