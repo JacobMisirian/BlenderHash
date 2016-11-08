@@ -15,7 +15,7 @@ namespace Blender.Cryptography
             {
                 GetHashCode(((Array)o).Length);
                 foreach (var element in (Array)o)
-                    GetHashCode(element);
+                    GetHashCode(blenderHash.Hash + element);
             }
             else if (o is bool)
                 blenderHash.ComputeHash(BitConverter.GetBytes((bool)o));
