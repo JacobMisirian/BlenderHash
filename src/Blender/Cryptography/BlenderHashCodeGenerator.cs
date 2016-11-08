@@ -11,7 +11,13 @@ namespace Blender.Cryptography
         public static string GetHashCode(object o)
         {
             blenderHash = new BlenderHash();
-            if (o is bool)
+            if (o is Array)
+            {
+                GetHashCode(((Array)o).Length);
+                foreach (var element in (Array)o)
+                    GetHashCode(element);
+            }
+            else if (o is bool)
                 blenderHash.ComputeHash(BitConverter.GetBytes((bool)o));
             else if (o is byte)
                 blenderHash.ComputeHash(new byte[] { (byte)o });
