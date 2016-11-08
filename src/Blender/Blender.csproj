@@ -41,6 +41,7 @@
     <Compile Include="BlenderConfig.cs" />
     <Compile Include="BlenderArgumentParser.cs" />
     <Compile Include="BlenderTest.cs" />
+    <Compile Include="Cryptography\BlenderHashCodeGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
